@@ -38,7 +38,7 @@ user_salt = 'MSKCC_LIP'
 
 
 # find images, and store relative filename only
-images = glob.glob(image_folder + '/*.jpg')
+images = glob.glob(image_folder + os.sep + '*.jpg')
 for idx, image in enumerate(images):
     images[idx] = image.rpartition(os.sep)[2]
 
@@ -159,16 +159,22 @@ def page():
             sel = 'NULL'
         lesion_image = lesion_id + '-' + sel
         if lesion_id in remaining and lesion_image in lesion_images:
-            selected.update({'lesion': page}, {'$push': {'selected': {uid: sel}}}, {'upsert': True})
+            selected.insert_one({'lesion': lesion_id, 'uid': uid, 'selected': sel})
             remaining[lesion_id] -= 1
-            if remaining[lesion_id] == 0:
+            if remaining[lesion_id] <= 0:
                 del remaining[lesion_id]
+        
         page = request.args.get('next')
         if not page:
             page = next_page(uid)
         else:
             page = check_page(uid, page)
-        resp = render_template(template, page=page)
+        if page == 'NULL':
+            resp = render_template(template, finished=True)
+        else:
+            images = lesions[page]
+            resp = render_template(template, page=page, images=images,
+                image_keys=list(images.keys()), num_images=len(images))
     if user_set:
         resp = make_response(resp)
         resp.set_cookie('user', user, 365*86400)

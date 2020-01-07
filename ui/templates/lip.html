@@ -10,6 +10,7 @@
 		</style>
 	</head>
 	<body bgcolor="#FFFFFF">
+
 		{% if entry %}
 		<h1>Welcome to the Lesion Image Picker interface.</h1>
 		<h2>Please enter your username and session ID:</h2>
@@ -23,14 +24,42 @@
 			{% endif %}
 			<tr><td>&nbsp;</td><td><input type="submit" name="Start" length="8" /></td></tr>
 		</table></form>
+
 		{% elif baduser %}
 		<h1>Invalid username or password. Please try again.</h1>
+
+		{% elif finished %}
+		<h1>Thank you for participating. You're done!!</h1>
+
 		{% else %}
 		<h1>Please select the image that best represents the lesion</h1>
 		<h2>Lesion ID: {{ page }}</h2>
 		<table border=0 cellpadding=2 cellspacing=2>
-$IMAGE_TABLE$
+			<tr>
+				{% for inum in range(0, num_images) %}
+				{% if inum > 0 and inum is divisibleby 3 %}
+				</tr><tr>
+				{% endif %}
+				{% set ts = 480 %}
+				{% set iw = images[image_keys[inum]][1][0] %}
+				{% set ih = images[image_keys[inum]][1][1] %}
+				{% if iw > ih %}
+				{% set ih = (ts * ih) // iw %}
+				{% set iw = ts %}
+				{% else %}
+				{% set iw = (ts * iw) // ih %}
+				{% set ih = ts %}
+				{% endif %}
+				<td>
+					<a href="/page.html?lesion={{ page }}&sel={{ image_keys[inum] }}">
+						<img src="/static/noheader/{{ page }}-{{ image_keys[inum] }}.jpg" width="{{ iw }}" height="{{ ih }}" />
+					</a><br />
+					<small><a href="/static/noheader/{{ page }}-{{ image_keys[inum] }}.jpg" target="_blank">see image {{ image_keys[inum] }} in full size</a></small>
+				</td>
+				{% endfor %}
+			</tr>
 		</table>
+
 		{% endif %}
 	</body>
 </html>
