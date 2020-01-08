@@ -16,13 +16,13 @@
 		<h2>Please enter your username and session ID:</h2>
 		<form action="/page.html" method="get"><table border="0">
 			{% if user and uid %}
-			<tr><td>Username:</td><td><input type="text" name="username" length="30" value="{{ user }}" /></td></tr>
-			<tr><td>Session ID:</td><td><input type="text" name="sessionid" length="8" value="{{ uid }}" /></td></tr>
+			<tr><td>Username:</td><td><input type="text" name="username" value="{{ user }}" /></td></tr>
+			<tr><td>Session ID:</td><td><input type="text" name="sessionid" maxlength="8" value="{{ uid }}" /></td></tr>
 			{% else %}
-			<tr><td>Username:</td><td><input type="text" name="username" length="30" /></td></tr>
-			<tr><td>Session ID:</td><td><input type="text" name="sessionid" length="8" /></td></tr>
+			<tr><td>Username:</td><td><input type="text" name="username" /></td></tr>
+			<tr><td>Session ID:</td><td><input type="text" name="sessionid" maxlength="8" /></td></tr>
 			{% endif %}
-			<tr><td>&nbsp;</td><td><input type="submit" name="Start" length="8" /></td></tr>
+			<tr><td>&nbsp;</td><td><input type="submit" name="Start" /></td></tr>
 		</table></form>
 
 		{% elif baduser %}
@@ -34,6 +34,15 @@
 		{% else %}
 		<h1>Please select the image that best represents the lesion</h1>
 		<h2>Lesion ID: {{ page }}</h2>
+		<form action="/page.html" method="GET">
+			<input type="hidden" name="lesion" value="{{ page }}" />
+			<input type="hidden" name="sel" value="00000000" />
+			<table border="0"><tr>
+				<td>Rejection comment:</td>
+				<td><input type="text" name="comment" size="60" /></td>
+				<td><input type="submit" name="Reject" /></td>
+			</tr></table>
+		</form>
 		<table border=0 cellpadding=2 cellspacing=2>
 			<tr>
 				{% for inum in range(0, num_images) %}

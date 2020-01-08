@@ -78,6 +78,7 @@ in_db = selected.find()
 for record in in_db:
     lesion_id = record['lesion']
     remaining[lesion_id] -= 1
+for lesion_id in list(remaining.keys()):
     if remaining[lesion_id] <= 0:
         del remaining[lesion_id]
 
@@ -160,8 +161,14 @@ def page():
         if not sel:
             sel = 'NULL'
         lesion_image = lesion_id + '-' + sel
-        if lesion_id in remaining and lesion_image in lesion_images:
-            selected.insert_one({'lesion': lesion_id, 'uid': uid, 'selected': sel})
+        if lesion_id in remaining and (lesion_image in lesion_images or sel == '00000000'):
+            if sel == '00000000':
+                comm = request.args.get('comment')
+                if comm:
+                    selected.insert_one(
+                        {'lesion': lesion_id, 'uid': uid, 'selected': sel, 'comment': comm})
+            else:
+                selected.insert_one({'lesion': lesion_id, 'uid': uid, 'selected': sel})
             remaining[lesion_id] -= 1
             if remaining[lesion_id] <= 0:
                 del remaining[lesion_id]
