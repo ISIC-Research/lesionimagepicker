@@ -23,7 +23,7 @@ def main():
     if not user:
         a.print_help()
     else:
-        m = hashlib.md5(bytes(user + user_salt, 'ascii'))
+        m = hashlib.md5(user + user_salt)
         umd5 = m.hexdigest()
         print(umd5[0:6].lower())
 

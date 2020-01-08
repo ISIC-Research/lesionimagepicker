@@ -88,7 +88,7 @@ def check_user(user, uid):
         return False
     elif user not in users:
         return False
-    m = hashlib.md5(bytes(user + user_salt, 'ascii'))
+    m = hashlib.md5(user + user_salt)
     umd5 = m.hexdigest()
     if uid.lower() == umd5[0:6].lower():
         return True
