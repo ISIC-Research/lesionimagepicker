@@ -3,6 +3,7 @@
 # images
 static/images/*.jpg
 static/noheader/*.jpg
+static/thumb/*.jpg
 
 # jupyter notebook checkpoints
 .ipynb_checkpoints/

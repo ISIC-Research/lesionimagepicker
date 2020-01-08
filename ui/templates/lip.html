@@ -52,14 +52,13 @@
 				{% endif %}
 				<td>
 					<a href="/page.html?lesion={{ page }}&sel={{ image_keys[inum] }}">
-						<img src="/static/noheader/{{ page }}-{{ image_keys[inum] }}.jpg" width="{{ iw }}" height="{{ ih }}" />
+						<img src="/static/thumb/{{ page }}-{{ image_keys[inum] }}.jpg" width="{{ iw }}" height="{{ ih }}" />
 					</a><br />
 					<small><a href="/static/noheader/{{ page }}-{{ image_keys[inum] }}.jpg" target="_blank">see image {{ image_keys[inum] }} in full size</a></small>
 				</td>
 				{% endfor %}
 			</tr>
 		</table>
-
 		{% endif %}
 	</body>
 </html>

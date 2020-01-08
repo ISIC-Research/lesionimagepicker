@@ -9,7 +9,7 @@
 # - below the image will be a link to show the image in full size
 #
 # - cookies: user (email address), uid (6-digit session id, from MD5)
-# - query fields: lesion (########-########-########), sel (########), and next (same as lesion)
+# - query fields: lesion (########-########-########), sel (########)
 
 
 # imports
@@ -26,8 +26,11 @@ from pymongo import MongoClient
 # settings
 #image_folder = '/Users/Jochen/Data/MSKCC/azure/html/static/images'
 image_folder = 'C:\\Users\\weberj3\\Documents\\git\\lesionimagepicker\\ui\\static\\noheader'
-number_reads = 1
+mongoloc = 'mongodb://127.0.0.1:27017'
+number_reads = 2
 template = 'lip.html'
+title = 'Lesion Image Picker'
+heading = 'Please pick an image for this lesion'
 
 # users
 users = [
@@ -63,7 +66,7 @@ for image in images:
     lesions[lesion_id][image_id] = [image_name, image_size]
 
 # connect to mongodb, and select collection (selected)
-client = MongoClient('mongodb://127.0.0.1:27017')
+client = MongoClient(mongoloc)
 db = client.lesion_image_picker
 selected = db.selected
 
@@ -77,6 +80,7 @@ for record in in_db:
     remaining[lesion_id] -= 1
     if remaining[lesion_id] <= 0:
         del remaining[lesion_id]
+
 
 # check username/session
 def check_user(user, uid):
@@ -100,6 +104,7 @@ def check_page(uid, page):
         if record['uid'] == uid:
             return next_page(uid)
     return page
+
 def next_page(uid):
     uremaining = dict()
     for rk in remaining.keys():
@@ -109,19 +114,15 @@ def next_page(uid):
         for record in in_db:
             if record['lesion'] in uremaining:
                 del uremaining[record['lesion']]
+    print(len(uremaining))
     if len(uremaining) == 0:
         return 'NULL'
     rkeys = list(uremaining.keys())
     return rkeys[int(len(rkeys) * random())]
 
+
 # generate Flask app
 app = Flask(__name__)
-
-title = 'Lesion Image Picker'
-heading = 'Please pick an image for this lesion'
-
-#def redirect_url():
-#    return request.args.get('next') or request.referrer or url_for('index')
 
 # and define routes
 @app.route('/index.html')
@@ -137,16 +138,16 @@ def entry():
 
 @app.route('/page.html')
 def page():
-    user = request.cookies.get('user')
-    uid = request.cookies.get('uid')
-    user_set = False
+    user = request.args.get('username')
+    uid = request.args.get('sessionid')
+    if not (user and uid):
+        user = request.cookies.get('user')
+        uid = request.cookies.get('uid')
+        user_set = False
+    else:
+        user_set = True
     if not user or user == '':
-        user = request.args.get('username')
-        uid = request.args.get('sessionid')
-        if not user:
-            user = 'NULL'
-        else:
-            user_set = True
+        user = 'NULL'
     if not check_user(user, uid):
         resp = render_template(template, baduser=user)
         user_set = False
@@ -181,6 +182,6 @@ def page():
         resp.set_cookie('uid', uid, 7*86400)
     return resp
 
+# call app.run if __main__
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-
