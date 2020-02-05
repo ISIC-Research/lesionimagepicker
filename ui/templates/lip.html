@@ -44,26 +44,16 @@
 			</tr></table>
 		</form>
 		<table border=0 cellpadding=2 cellspacing=2>
-			<tr>
+			<tr height=520 valign="middle">
 				{% for inum in range(0, num_images) %}
 				{% if inum > 0 and inum is divisibleby 3 %}
-				</tr><tr>
+				</tr><tr height=520 valign="middle">
 				{% endif %}
-				{% set ts = 480 %}
-				{% set iw = images[image_keys[inum]][1][0] %}
-				{% set ih = images[image_keys[inum]][1][1] %}
-				{% if iw > ih %}
-				{% set ih = (ts * ih) // iw %}
-				{% set iw = ts %}
-				{% else %}
-				{% set iw = (ts * iw) // ih %}
-				{% set ih = ts %}
-				{% endif %}
-				<td>
+				<td height=520 width=488 align="center">
 					<a href="/page.html?lesion={{ page }}&sel={{ image_keys[inum] }}">
-						<img src="/static/thumb/{{ page }}-{{ image_keys[inum] }}.jpg" width="{{ iw }}" height="{{ ih }}" />
+						<img src="/static/thumb/{{ page[0:8] }}/{{ page }}_{{ image_keys[inum] }}.jpg" border=0 />
 					</a><br />
-					<small><a href="/static/noheader/{{ page }}-{{ image_keys[inum] }}.jpg" target="_blank">see image {{ image_keys[inum] }} in full size</a></small>
+					<small><a href="/static/noheader/{{ page[0:8] }}/{{ page }}_{{ image_keys[inum] }}.jpg" target="_blank">{{ image_keys[inum] }} in full size</a></small>
 				</td>
 				{% endfor %}
 			</tr>

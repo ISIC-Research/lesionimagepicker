@@ -19,7 +19,6 @@ import os
 from random import random
 
 from flask import Flask, make_response, render_template, request # , redirect, url_for
-import imagesize
 from pymongo import MongoClient
 
 
@@ -28,7 +27,7 @@ from pymongo import MongoClient
 #image_folder = 'C:\\Users\\weberj3\\Documents\\git\\lesionimagepicker\\ui\\static\\noheader'
 image_folder = '/home/jochen/lesionimagepicker/ui/static/noheader'
 mongoloc = 'mongodb://127.0.0.1:27017'
-number_reads = 3
+number_reads = 1
 template = 'lip.html'
 title = 'Lesion Image Picker'
 heading = 'Please pick an image for this lesion'
@@ -37,6 +36,8 @@ heading = 'Please pick an image for this lesion'
 users = [
     'chousake@mskcc.org',
     'kurtansn@mskcc.org',
+    'musthaqs@mskcc.org',
+    'nandaj@mskcc.org',
     'reiterao@mskcc.org',
     'rotembev@mskcc.org',
     'weberj3@mskcc.org',
@@ -45,30 +46,29 @@ user_salt = 'MSKCC_LIP'
 
 
 # find images, and store relative filename only
-images = glob.glob(image_folder + os.sep + '*.jpg')
+imagefiles = glob.glob(image_folder + os.sep + '*' + os.sep + '*.jpg')
+images = imagefiles.copy()
 for idx, image in enumerate(images):
     images[idx] = image.rpartition(os.sep)[2]
 
 # parse into lesions
 lesions = dict()
 lesion_images = dict()
-for image in images:
+for idx, image in enumerate(images):
     image_name = image.partition('.')[0]
     lesion_images[image_name] = True
-    image_size = imagesize.get(image_folder + os.sep + image)
-    if '-' in image_name:
-        image_parts = image_name.split('-')
-    elif '_' in image_name:
+    if '_' in image_name:
         image_parts = image_name.split('_')
     else:
         print('Invalid image name: ' + image_name)
         continue
-    lesion_id = image_parts[0] + '-' + image_parts[1] + '-' + image_parts[2]
+    lesion_id = image_parts[0] + '_' + image_parts[1] + '_' + image_parts[2]
     image_id = image_parts[3]
     if not lesion_id in lesions:
         lesions[lesion_id] = dict()
-    lesions[lesion_id][image_id] = [image_name, image_size]
-print('{0:d} lesions found.'.format((len(lesions))))
+    lesions[lesion_id][image_id] = [image_name, imagefiles[idx]]
+print('{0:d} lesions (with {1:d} images) found.'.format(
+    len(lesions), len(images)))
 
 # connect to mongodb, and select collection (selected)
 client = MongoClient(mongoloc)
@@ -83,10 +83,14 @@ in_db = selected.find()
 for record in in_db:
     lesion_id = record['lesion']
     remaining[lesion_id] -= 1
+total_remaining = 0
 for lesion_id in list(remaining.keys()):
     if remaining[lesion_id] <= 0:
         del remaining[lesion_id]
-
+    else:
+        total_remaining += remaining[lesion_id]
+print('{0:d} lesions remain to be picked (with {1:d} picks).'.format(
+    len(remaining), total_remaining))
 
 # check username/session
 def check_user(user, uid):
