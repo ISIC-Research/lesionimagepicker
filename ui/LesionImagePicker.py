@@ -13,6 +13,7 @@
 
 
 # imports
+import copy
 import glob
 import hashlib
 import os
@@ -47,7 +48,7 @@ user_salt = 'MSKCC_LIP'
 
 # find images, and store relative filename only
 imagefiles = glob.glob(image_folder + os.sep + '*' + os.sep + '*.jpg')
-images = imagefiles.copy()
+images = copy.deepcopy(imagefiles)
 for idx, image in enumerate(images):
     images[idx] = image.rpartition(os.sep)[2]
 
