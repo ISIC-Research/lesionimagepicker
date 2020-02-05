@@ -68,6 +68,7 @@ for image in images:
     if not lesion_id in lesions:
         lesions[lesion_id] = dict()
     lesions[lesion_id][image_id] = [image_name, image_size]
+print('{0:d} lesions found.'.format((len(lesions))))
 
 # connect to mongodb, and select collection (selected)
 client = MongoClient(mongoloc)
