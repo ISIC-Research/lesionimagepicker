@@ -83,6 +83,9 @@ for lesion_id in lesions.keys():
 in_db = selected.find()
 for record in in_db:
     lesion_id = record['lesion']
+    if lesion_id not in remaining:
+        print(lesion_id)
+        continue
     remaining[lesion_id] -= 1
 total_remaining = 0
 for lesion_id in list(remaining.keys()):
@@ -170,7 +173,7 @@ def page():
         sel = request.args.get('sel')
         if not sel:
             sel = 'NULL'
-        lesion_image = lesion_id + '-' + sel
+        lesion_image = lesion_id + '_' + sel
         if lesion_id in remaining and (lesion_image in lesion_images or sel == '00000000'):
             if sel == '00000000':
                 comm = request.args.get('comment')
