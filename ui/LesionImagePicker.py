@@ -174,12 +174,23 @@ def page():
         if not sel:
             sel = 'NULL'
         lesion_image = lesion_id + '_' + sel
-        if lesion_id in remaining and (lesion_image in lesion_images or sel == '00000000'):
+        if lesion_id in remaining and (lesion_image in lesion_images or sel == '00000000' or sel == 'multiple'):
             if sel == '00000000':
                 comm = request.args.get('comment')
                 if comm:
                     selected.insert_one(
                         {'lesion': lesion_id, 'uid': uid, 'selected': sel, 'comment': comm})
+            elif sel == 'multiple':
+                comm = request.args.get('comment')
+                sel = ''
+                for msc in range(32):
+                    ssel = request.args.get('multi' + str(msc))
+                    if ssel:
+                        if sel:
+                            sel += '+'
+                        sel += ssel
+                selected.insert_one(
+                    {'lesion': lesion_id, 'uid': uid, 'selected': sel, 'comment': comm})
             else:
                 selected.insert_one({'lesion': lesion_id, 'uid': uid, 'selected': sel})
             remaining[lesion_id] -= 1
@@ -196,7 +207,8 @@ def page():
         else:
             images = lesions[page]
             resp = render_template(template, page=page, images=images,
-                image_keys=list(images.keys()), num_images=len(images))
+                image_keys=list(images.keys()), num_images=len(images),
+                remaining=len(remaining))
     if user_set:
         resp = make_response(resp)
         resp.set_cookie('user', user, 365*86400)

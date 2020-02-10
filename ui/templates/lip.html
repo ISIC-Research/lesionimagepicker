@@ -43,21 +43,33 @@
 				<td><input type="submit" name="Reject" /></td>
 			</tr></table>
 		</form>
-		<table border=0 cellpadding=2 cellspacing=2>
-			<tr height=520 valign="middle">
-				{% for inum in range(0, num_images) %}
-				{% if inum > 0 and inum is divisibleby 3 %}
-				</tr><tr height=520 valign="middle">
-				{% endif %}
-				<td height=520 width=488 align="center">
-					<a href="/page.html?lesion={{ page }}&sel={{ image_keys[inum] }}">
-						<img src="/static/thumb/{{ page[0:8] }}/{{ page }}_{{ image_keys[inum] }}.jpg" border=0 />
-					</a><br />
-					<small><a href="/static/noheader/{{ page[0:8] }}/{{ page }}_{{ image_keys[inum] }}.jpg" target="_blank">{{ image_keys[inum] }} in full size</a></small>
-				</td>
-				{% endfor %}
-			</tr>
-		</table>
+		<form action="/page.html" method="GET">
+			<input type="hidden" name="lesion" value="{{ page }}" />
+			<input type="hidden" name="sel" value="multiple" />
+			<table border=0 cellpadding=2 cellspacing=2>
+				<tr height=520 valign="middle">
+					{% for inum in range(0, num_images) %}
+					{% if inum > 0 and inum is divisibleby 3 %}
+					</tr><tr height=520 valign="middle">
+					{% endif %}
+					<td height=520 width=488 align="center">
+						<a href="/page.html?lesion={{ page }}&sel={{ image_keys[inum] }}">
+							<img src="/static/thumb/{{ page[0:8] }}/{{ page }}_{{ image_keys[inum] }}.jpg" border=0 />
+						</a><br />
+						<small><a href="/static/noheader/{{ page[0:8] }}/{{ page }}_{{ image_keys[inum] }}.jpg" target="_blank">{{ image_keys[inum] }} in full size</a></small>
+						<br />
+						<input type="checkbox" name="multi{{ inum }}" value="{{ image_keys[inum] }}" />
+					</td>
+					{% endfor %}
+				</tr>
+			</table>
+			<table border="0"><tr>
+				<td>Multi-selection comment comment:</td>
+				<td><input type="text" name="comment" size="60" /></td>
+				<td><input type="submit" name="select" /></td>
+			</tr></table>
+		</form>
+		<p>There are {{ remaining }} lesions remaining to be picked.</p>
 		{% endif %}
 	</body>
 </html>
