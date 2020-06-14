@@ -42,6 +42,7 @@ users = [
     'reiterao@mskcc.org',
     'rotembev@mskcc.org',
     'weberj3@mskcc.org',
+    'quattrocchi.enrica@mayo.edu',
 ]
 user_salt = 'MSKCC_LIP'
 
@@ -102,7 +103,7 @@ def check_user(user, uid):
         return False
     elif user not in users:
         return False
-    usp = user + user_salt
+    usp = user.lower() + user_salt
     m = hashlib.md5(usp.encode('utf-8'))
     umd5 = m.hexdigest()
     if uid.lower() == umd5[0:6].lower():
