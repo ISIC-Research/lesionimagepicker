@@ -24,8 +24,6 @@ from pymongo import MongoClient
 
 
 # settings
-#image_folder = '/Users/Jochen/Data/MSKCC/azure/html/static/images'
-#image_folder = 'C:\\Users\\weberj3\\Documents\\git\\lesionimagepicker\\ui\\static\\noheader'
 image_folder = '/home/jochen/lesionimagepicker/ui/static/noheader'
 mongoloc = 'mongodb://127.0.0.1:27017'
 number_reads = 1
@@ -35,14 +33,9 @@ heading = 'Please pick an image for this lesion'
 
 # users
 users = [
-    'chousake@mskcc.org',
     'kurtansn@mskcc.org',
-    'musthaqs@mskcc.org',
-    'nandaj@mskcc.org',
-    'reiterao@mskcc.org',
     'rotembev@mskcc.org',
     'weberj3@mskcc.org',
-    'quattrocchi.enrica@mayo.edu',
 ]
 user_salt = 'MSKCC_LIP'
 
