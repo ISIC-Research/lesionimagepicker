@@ -25,6 +25,7 @@ from pymongo import MongoClient
 
 # settings
 image_folder = '/home/jochen/lesionimagepicker/ui/static/noheader'
+thumb_folder = '/home/jochen/lesionimagepicker/ui/static/thumb'
 mongoloc = 'mongodb://127.0.0.1:27017'
 number_reads = 1
 template = 'lip.html'
@@ -38,6 +39,25 @@ users = [
     'weberj3@mskcc.org',
 ]
 user_salt = 'MSKCC_LIP'
+
+
+# sub function
+def thumb_images(images):
+    from PIL import Image as pil_image
+    for i in images.values():
+        basename = os.path.basename(i[1])
+        if os.path.exists(thumb_folder + os.sep + basename):
+            continue
+        image_data = pil_image.open(i[1])
+        image_w, image_h = image_data.size
+        if image_w > image_h:
+            thumb_w = 320
+            thumb_h = int(image_h / (image_w / 320))
+        else:
+            thumb_h = 320
+            thumb_w = int(image_w / (image_h / 320))
+        thumb_data = image_data.resize((thumb_w, thumb_h), resample=pil_image.BILINEAR)
+        thumb_data.save(thumb_folder + os.sep + basename, quality=90)
 
 
 # find images, and store relative filename only
@@ -200,6 +220,7 @@ def page():
             resp = render_template(template, finished=True)
         else:
             images = lesions[page]
+            thumb_images(images)
             resp = render_template(template, page=page, images=images,
                 image_keys=list(images.keys()), num_images=len(images),
                 remaining=len(remaining))
